@@ -7,20 +7,20 @@ import (
 	"github.com/ontio/ontology/common"
 	"github.com/ontio/ontology/core/types"
 	cutils "github.com/ontio/ontology/core/utils"
-	"github.com/ontio/ontology/smartcontract/service/native/ongx"
+	"github.com/ontio/ontology/smartcontract/service/native/ont"
 )
 
 var (
-	ONG_CONTRACT_ADDRESS, _           = utils.AddressFromHexString("0200000000000000000000000000000000000000")
+	ONG_CONTRACT_ADDRESS, _ = utils.AddressFromHexString("0200000000000000000000000000000000000000")
 )
 
 var (
-	ONG_CONTRACT_VERSION           = byte(0)
+	ONG_CONTRACT_VERSION = byte(0)
 )
 
 type NativeContract struct {
-	ontSdk       *OntologySdk
-	Ong          *Ong
+	ontSdk *OntologySdk
+	Ong    *Ong
 }
 
 func newNativeContract(ontSdk *OntologySdk) *NativeContract {
@@ -93,12 +93,12 @@ type Ong struct {
 }
 
 func (this *Ong) NewTransferTransaction(sideChainID uint32, gasPrice, gasLimit uint64, from, to common.Address, amount uint64) (*types.MutableTransaction, error) {
-	state := &ongx.State{
+	state := &ont.State{
 		From:  from,
 		To:    to,
 		Value: amount,
 	}
-	return this.NewMultiTransferTransaction(sideChainID, gasPrice, gasLimit, []*ongx.State{state})
+	return this.NewMultiTransferTransaction(sideChainID, gasPrice, gasLimit, []*ont.State{state})
 }
 
 func (this *Ong) Transfer(sideChainID uint32, gasPrice, gasLimit uint64, from *Account, to common.Address, amount uint64) (common.Uint256, error) {
@@ -113,18 +113,18 @@ func (this *Ong) Transfer(sideChainID uint32, gasPrice, gasLimit uint64, from *A
 	return this.ontSdk.SendTransaction(tx)
 }
 
-func (this *Ong) NewMultiTransferTransaction(sideChainID uint32, gasPrice, gasLimit uint64, states []*ongx.State) (*types.MutableTransaction, error) {
+func (this *Ong) NewMultiTransferTransaction(sideChainID uint32, gasPrice, gasLimit uint64, states []*ont.State) (*types.MutableTransaction, error) {
 	return this.native.NewNativeInvokeTransaction(
 		sideChainID,
 		gasPrice,
 		gasLimit,
 		ONG_CONTRACT_VERSION,
 		ONG_CONTRACT_ADDRESS,
-		ongx.TRANSFER_NAME,
+		ont.TRANSFER_NAME,
 		[]interface{}{states})
 }
 
-func (this *Ong) MultiTransfer(sideChainID uint32, gasPrice, gasLimit uint64, states []*ongx.State, signer *Account) (common.Uint256, error) {
+func (this *Ong) MultiTransfer(sideChainID uint32, gasPrice, gasLimit uint64, states []*ont.State, signer *Account) (common.Uint256, error) {
 	tx, err := this.NewMultiTransferTransaction(sideChainID, gasPrice, gasLimit, states)
 	if err != nil {
 		return common.UINT256_EMPTY, err
@@ -137,7 +137,7 @@ func (this *Ong) MultiTransfer(sideChainID uint32, gasPrice, gasLimit uint64, st
 }
 
 func (this *Ong) NewTransferFromTransaction(sideChainID uint32, gasPrice, gasLimit uint64, sender, from, to common.Address, amount uint64) (*types.MutableTransaction, error) {
-	state := &ongx.TransferFrom{
+	state := &ont.TransferFrom{
 		Sender: sender,
 		From:   from,
 		To:     to,
@@ -149,7 +149,7 @@ func (this *Ong) NewTransferFromTransaction(sideChainID uint32, gasPrice, gasLim
 		gasLimit,
 		ONG_CONTRACT_VERSION,
 		ONG_CONTRACT_ADDRESS,
-		ongx.TRANSFERFROM_NAME,
+		ont.TRANSFERFROM_NAME,
 		[]interface{}{state},
 	)
 }
@@ -167,7 +167,7 @@ func (this *Ong) TransferFrom(sideChainID uint32, gasPrice, gasLimit uint64, sen
 }
 
 func (this *Ong) NewApproveTransaction(sideChainID uint32, gasPrice, gasLimit uint64, from, to common.Address, amount uint64) (*types.MutableTransaction, error) {
-	state := &ongx.State{
+	state := &ont.State{
 		From:  from,
 		To:    to,
 		Value: amount,
@@ -178,7 +178,7 @@ func (this *Ong) NewApproveTransaction(sideChainID uint32, gasPrice, gasLimit ui
 		gasLimit,
 		ONG_CONTRACT_VERSION,
 		ONG_CONTRACT_ADDRESS,
-		ongx.APPROVE_NAME,
+		ont.APPROVE_NAME,
 		[]interface{}{state},
 	)
 }
@@ -204,7 +204,7 @@ func (this *Ong) Allowance(sideChainID uint32, from, to common.Address) (uint64,
 		sideChainID,
 		ONG_CONTRACT_ADDRESS,
 		ONG_CONTRACT_VERSION,
-		ongx.ALLOWANCE_NAME,
+		ont.ALLOWANCE_NAME,
 		[]interface{}{&allowanceStruct{From: from, To: to}},
 	)
 	if err != nil {
@@ -222,7 +222,7 @@ func (this *Ong) Symbol(sideChainID uint32) (string, error) {
 		sideChainID,
 		ONG_CONTRACT_ADDRESS,
 		ONG_CONTRACT_VERSION,
-		ongx.SYMBOL_NAME,
+		ont.SYMBOL_NAME,
 		[]interface{}{},
 	)
 	if err != nil {
@@ -236,7 +236,7 @@ func (this *Ong) BalanceOf(sideChainID uint32, address common.Address) (uint64, 
 		sideChainID,
 		ONG_CONTRACT_ADDRESS,
 		ONG_CONTRACT_VERSION,
-		ongx.BALANCEOF_NAME,
+		ont.BALANCEOF_NAME,
 		[]interface{}{address[:]},
 	)
 	if err != nil {
@@ -254,7 +254,7 @@ func (this *Ong) Name(sideChainID uint32) (string, error) {
 		sideChainID,
 		ONG_CONTRACT_ADDRESS,
 		ONG_CONTRACT_VERSION,
-		ongx.NAME_NAME,
+		ont.NAME_NAME,
 		[]interface{}{},
 	)
 	if err != nil {
@@ -268,7 +268,7 @@ func (this *Ong) Decimals(sideChainID uint32) (byte, error) {
 		sideChainID,
 		ONG_CONTRACT_ADDRESS,
 		ONG_CONTRACT_VERSION,
-		ongx.DECIMALS_NAME,
+		ont.DECIMALS_NAME,
 		[]interface{}{},
 	)
 	if err != nil {
@@ -286,7 +286,7 @@ func (this *Ong) TotalSupply(sideChainID uint32) (uint64, error) {
 		sideChainID,
 		ONG_CONTRACT_ADDRESS,
 		ONG_CONTRACT_VERSION,
-		ongx.TOTAL_SUPPLY_NAME,
+		ont.TOTAL_SUPPLY_NAME,
 		[]interface{}{},
 	)
 	if err != nil {

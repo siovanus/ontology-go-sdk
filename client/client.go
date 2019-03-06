@@ -6,6 +6,7 @@ import (
 	sdkcom "github.com/ontio/ontology-go-sdk/common"
 	"github.com/ontio/ontology-go-sdk/utils"
 	"github.com/ontio/ontology/common"
+	"github.com/ontio/ontology/core/new_types"
 	"github.com/ontio/ontology/core/types"
 	"sync/atomic"
 	"time"
@@ -85,6 +86,18 @@ func (this *ClientMgr) GetBlockByHeight(height uint32) (*types.Block, error) {
 		return nil, err
 	}
 	return utils.GetBlock(data)
+}
+
+func (this *ClientMgr) GetSideChainBlockByHeight(height uint32) (*new_types.Block, error) {
+	client := this.getClient()
+	if client == nil {
+		return nil, fmt.Errorf("don't have available client of ontology")
+	}
+	data, err := client.getBlockByHeight(this.getNextQid(), height)
+	if err != nil {
+		return nil, err
+	}
+	return utils.GetSideChainBlock(data)
 }
 
 func (this *ClientMgr) GetBlockByHash(blockHash string) (*types.Block, error) {

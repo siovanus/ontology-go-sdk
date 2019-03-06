@@ -29,8 +29,8 @@ import (
 	"github.com/ontio/ontology-go-sdk/utils"
 	"github.com/ontio/ontology/common"
 	"github.com/ontio/ontology/common/constants"
-	"github.com/ontio/ontology/core/types"
 	"github.com/ontio/ontology/core/payload"
+	"github.com/ontio/ontology/core/types"
 )
 
 func init() {
@@ -74,13 +74,13 @@ func (this *OntologySdk) NewInvokeTransaction(sideChainID uint32, gasPrice, gasL
 	}
 	tx := &types.MutableTransaction{
 		SideChainID: sideChainID,
-		Version: types.TX_VERSION,
-		GasPrice: gasPrice,
-		GasLimit: gasLimit,
-		TxType:   types.Invoke,
-		Nonce:    rand.Uint32(),
-		Payload:  invokePayload,
-		Sigs:     make([]types.Sig, 0, 0),
+		Version:     types.TX_VERSION,
+		GasPrice:    gasPrice,
+		GasLimit:    gasLimit,
+		TxType:      types.Invoke,
+		Nonce:       rand.Uint32(),
+		Payload:     invokePayload,
+		Sigs:        make([]types.Sig, 0, 0),
 	}
 	return tx
 }

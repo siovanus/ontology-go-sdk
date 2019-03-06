@@ -98,14 +98,14 @@ func (this *WasmVMContract) NewDeployWasmVMCodeTransaction(sideChainID uint32, g
 		Description: contract.Description,
 	}
 	tx := &types.MutableTransaction{
-		Version:  sdkcom.VERSION_TRANSACTION,
+		Version:     sdkcom.VERSION_TRANSACTION,
 		SideChainID: sideChainID,
-		TxType:   types.Deploy,
-		Nonce:    uint32(time.Now().Unix()),
-		Payload:  deployPayload,
-		GasPrice: gasPrice,
-		GasLimit: gasLimit,
-		Sigs:     make([]types.Sig, 0, 0),
+		TxType:      types.Deploy,
+		Nonce:       uint32(time.Now().Unix()),
+		Payload:     deployPayload,
+		GasPrice:    gasPrice,
+		GasLimit:    gasLimit,
+		Sigs:        make([]types.Sig, 0, 0),
 	}
 	return tx
 }
