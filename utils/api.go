@@ -24,7 +24,6 @@ import (
 	"fmt"
 	sdkcom "github.com/ontio/ontology-go-sdk/common"
 	"github.com/ontio/ontology/common"
-	"github.com/ontio/ontology/core/new_types"
 	"github.com/ontio/ontology/core/payload"
 	"github.com/ontio/ontology/core/types"
 )
@@ -49,19 +48,6 @@ func GetBlock(data []byte) (*types.Block, error) {
 		return nil, fmt.Errorf("hex.DecodeString error:%s", err)
 	}
 	return types.BlockFromRawBytes(blockData)
-}
-
-func GetSideChainBlock(data []byte) (*new_types.Block, error) {
-	hexStr := ""
-	err := json.Unmarshal(data, &hexStr)
-	if err != nil {
-		return nil, fmt.Errorf("json.Unmarshal error:%s", err)
-	}
-	blockData, err := hex.DecodeString(hexStr)
-	if err != nil {
-		return nil, fmt.Errorf("hex.DecodeString error:%s", err)
-	}
-	return new_types.BlockFromRawBytes(blockData)
 }
 
 func GetUint32(data []byte) (uint32, error) {
