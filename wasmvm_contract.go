@@ -87,7 +87,7 @@ func (txs *TxStruct) Deserialize(data []byte) error {
 	return nil
 }
 
-func (this *WasmVMContract) NewDeployWasmVMCodeTransaction(sideChainID uint32, gasPrice, gasLimit uint64, contract *sdkcom.SmartContract) *types.MutableTransaction {
+func (this *WasmVMContract) NewDeployWasmVMCodeTransaction(chainID uint64, gasPrice, gasLimit uint64, contract *sdkcom.SmartContract) *types.MutableTransaction {
 	deployPayload := &payload.DeployCode{
 		Code:        contract.Code,
 		NeedStorage: contract.NeedStorage,
@@ -98,21 +98,21 @@ func (this *WasmVMContract) NewDeployWasmVMCodeTransaction(sideChainID uint32, g
 		Description: contract.Description,
 	}
 	tx := &types.MutableTransaction{
-		Version:     sdkcom.VERSION_TRANSACTION,
-		SideChainID: sideChainID,
-		TxType:      types.Deploy,
-		Nonce:       uint32(time.Now().Unix()),
-		Payload:     deployPayload,
-		GasPrice:    gasPrice,
-		GasLimit:    gasLimit,
-		Sigs:        make([]types.Sig, 0, 0),
+		Version:  sdkcom.VERSION_TRANSACTION,
+		ShardID:  chainID,
+		TxType:   types.Deploy,
+		Nonce:    uint32(time.Now().Unix()),
+		Payload:  deployPayload,
+		GasPrice: gasPrice,
+		GasLimit: gasLimit,
+		Sigs:     make([]types.Sig, 0, 0),
 	}
 	return tx
 }
 
 //DeploySmartContract Deploy smart contract to ontology
 func (this *WasmVMContract) DeployWasmVMSmartContract(
-	sideChainID uint32,
+	chainID uint64,
 	gasPrice,
 	gasLimit uint64,
 	singer *Account,
@@ -128,7 +128,7 @@ func (this *WasmVMContract) DeployWasmVMSmartContract(
 	if err != nil {
 		return common.UINT256_EMPTY, fmt.Errorf("code hex decode error:%s", err)
 	}
-	tx := this.NewDeployWasmVMCodeTransaction(sideChainID, gasPrice, gasLimit, &sdkcom.SmartContract{
+	tx := this.NewDeployWasmVMCodeTransaction(chainID, gasPrice, gasLimit, &sdkcom.SmartContract{
 		Code:        invokeCode,
 		NeedStorage: needStorage,
 		Name:        name,
@@ -232,7 +232,7 @@ func buildWasmContractParam(params []interface{}, paramType wasmvm.ParamType) ([
 //paramType  is Json or Raw format
 //version should be greater than 0 (0 is reserved for test)
 func (this *WasmVMContract) InvokeWasmVMSmartContract(
-	sideChainID uint32,
+	chainID uint64,
 	gasPrice,
 	gasLimit uint64,
 	signer *Account,
@@ -273,7 +273,7 @@ func (this *WasmVMContract) InvokeWasmVMSmartContract(
 		return common.UINT256_EMPTY, fmt.Errorf("build wasm contract param failed:%s", err)
 	}
 
-	tx := this.ontSdk.NewInvokeTransaction(sideChainID, gasPrice, gasLimit, bs)
+	tx := this.ontSdk.NewInvokeTransaction(chainID, gasPrice, gasLimit, bs)
 	err = this.ontSdk.SignToTransaction(tx, signer)
 	if err != nil {
 		return common.Uint256{}, nil
@@ -282,7 +282,7 @@ func (this *WasmVMContract) InvokeWasmVMSmartContract(
 }
 
 func (this *WasmVMContract) PreExecInvokeNeoVMContract(
-	sideChainID uint32,
+	chainID uint64,
 	contractAddress common.Address,
 	methodName string,
 	paramType wasmvm.ParamType,
@@ -320,7 +320,7 @@ func (this *WasmVMContract) PreExecInvokeNeoVMContract(
 		return nil, fmt.Errorf("build wasm contract param failed:%s", err)
 	}
 
-	tx := this.ontSdk.NewInvokeTransaction(sideChainID, 0, 0, bs)
+	tx := this.ontSdk.NewInvokeTransaction(chainID, 0, 0, bs)
 	if err != nil {
 		return nil, err
 	}

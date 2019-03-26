@@ -68,19 +68,19 @@ func (this *OntologySdk) OpenWallet(walletFile string) (*Wallet, error) {
 }
 
 //NewInvokeTransaction return smart contract invoke transaction
-func (this *OntologySdk) NewInvokeTransaction(sideChainID uint32, gasPrice, gasLimit uint64, invokeCode []byte) *types.MutableTransaction {
+func (this *OntologySdk) NewInvokeTransaction(chainID uint64, gasPrice, gasLimit uint64, invokeCode []byte) *types.MutableTransaction {
 	invokePayload := &payload.InvokeCode{
 		Code: invokeCode,
 	}
 	tx := &types.MutableTransaction{
-		SideChainID: sideChainID,
-		Version:     types.TX_VERSION,
-		GasPrice:    gasPrice,
-		GasLimit:    gasLimit,
-		TxType:      types.Invoke,
-		Nonce:       rand.Uint32(),
-		Payload:     invokePayload,
-		Sigs:        make([]types.Sig, 0, 0),
+		ShardID:  chainID,
+		Version:  types.VERSION_SUPPORT_SHARD,
+		GasPrice: gasPrice,
+		GasLimit: gasLimit,
+		TxType:   types.Invoke,
+		Nonce:    rand.Uint32(),
+		Payload:  invokePayload,
+		Sigs:     make([]types.Sig, 0, 0),
 	}
 	return tx
 }

@@ -26,7 +26,6 @@ import (
 	"github.com/ontio/ontology/common"
 	"github.com/ontio/ontology/core/payload"
 	"math/big"
-	"github.com/ontio/ontology/rlp"
 )
 
 var (
@@ -238,8 +237,9 @@ type MerkleProof struct {
 	TargetHashes     []string
 }
 
-type MPTProof struct {
-	MPTProof []rlp.RawValue
+type CrossStatesProof struct {
+	Type      string
+	AuditPath string
 }
 
 type BlockTxHashes struct {
